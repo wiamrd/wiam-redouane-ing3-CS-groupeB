@@ -1,44 +1,36 @@
-section .data                           
-   inputMsg db 'Valeur : ' 
-   lenInputMsg equ $-inputMsg                         
-   outputMsg db '1337'
-   lenOutputMsg equ $-outputMsg
-   num dd '42'
-  
-section .bss           
-   input resb 5
-	
-section .text          
-   global _start
-   	
-_start:                
-   mov eax, 4
-   mov ebx, 1
-   mov ecx, inputMsg
-   mov edx, lenInputMsg
-   int 80h
+section .data
+    num db '1337'
+    input db 0
 
-   mov eax, 3
-   mov ebx, 2
-   mov ecx, input  
-   mov edx, 5          
-   int 80h
-    
-   mov eax, 4
-   mov ebx, 1
-   mov ecx, outputMsg
-   mov edx, lenOutputMsg
-   int 80h
-   
-   cmp ecx,[num]
-   je exit2
-   
-   exit1:
-   mov eax, 1
-   mov ebx, 1
-   int 80h
+section .text
+    global _start
 
-   exit2:
-   mov eax, 1
-   mov ebx, 0
-   int 80h
+_start:
+    ; read input
+    mov eax, 3
+    mov ebx, 0
+    mov ecx, input
+    mov edx, 1
+    int 0x80
+
+    ; compare input to 42
+    mov eax, [input]
+    cmp eax, 42
+    jne end
+    ; input is 42
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, num
+    mov edx, 4
+    int 0x80
+    ; exit syscall
+    mov eax, 1
+    xor ebx, ebx
+    int 0x80
+
+end:
+    ; input is not 42
+    mov eax, 1
+    mov ebx, 1
+    int 0x80
+
